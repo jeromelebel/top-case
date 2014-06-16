@@ -88,6 +88,56 @@ void setColorStrip(uint32_t color)
     strip.show();
 }
 
+uint8_t currentServo = 15;
+
+int moveservo(String args)
+{
+    Serial.print("set value ");
+    Serial.print(args.toInt());
+    Serial.print(" for servo ");
+    Serial.println(currentServo);
+    pwm.setPWM(currentServo, 0, args.toInt());
+    return 0;
+}
+
+int setservo(String args)
+{
+    Serial.print("set servo ");
+    Serial.println(args.toInt());
+    currentServo = args.toInt();
+    return 0;
+}
+
+int releaseservo(String args)
+{
+    Serial.print("set servo ");
+    Serial.println(args.toInt());
+    pwm.setPWM(currentServo, 4096, 0);
+    return 0;
+}
+
+int setfrequency(String args)
+{
+    Serial.print("set servo ");
+    Serial.println(args.toInt());
+    pwm.setPWMFreq(args.toInt());
+    return 0;
+}
+
+int test(String args)
+{
+    Serial.println("test");
+    for (uint16_t pulselen = SERVOMIN; pulselen < SERVOMAX; pulselen++) {
+        pwm.setPWM(15, 0, pulselen);
+        pwm.setPWM(12, 0, pulselen);
+    }
+    for (uint16_t pulselen = SERVOMAX; pulselen > SERVOMIN; pulselen--) {
+        pwm.setPWM(15, 0, pulselen);
+        pwm.setPWM(12, 0, pulselen);
+    }
+    return 0;
+}
+
 void setup()
 { 
     Serial.begin(115200);
@@ -105,6 +155,12 @@ void setup()
     
     pwm.begin();
     pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
+    
+    Spark.function("setservo", setservo);
+    Spark.function("moveservo", moveservo);
+    Spark.function("releaseservo", releaseservo);
+    Spark.function("setfrequency", setfrequency);
+    Spark.function("test", test);
 }
 
 bool compareRFID(uint8_t *card1, uint8_t *card2)
@@ -171,6 +227,7 @@ void rfid_loop()
 
 void loop()
 {
+    return;
     for (uint16_t pulselen = SERVOMIN; pulselen < SERVOMAX; pulselen++) {
         pwm.setPWM(15, 0, pulselen);
         pwm.setPWM(12, 0, pulselen);
