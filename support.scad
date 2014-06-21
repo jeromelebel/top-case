@@ -15,7 +15,7 @@ difference () {
     }
     translate([-5, -5, -10]) cube([60, 60, 10]);
     translate([0, -5, plate_height]) cube([30, 60, 60]);
-    translate([0, -1, plate_height]) cube([40, 18, 30]);
+    translate([0, -1, plate_height]) cube([44, 18, 30]);
 }
 
 translate([37, 0, 0]) rotate(a = [0, -angle, 0])
