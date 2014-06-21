@@ -9,12 +9,13 @@ difference () {
         translate([20, 0, 0]) cube([15, 85, plate_height]);
         translate([0, 65, 0]) cube([20, 20, plate_height]);
         translate([30, 0, 0]) cube([40, 27, 20]);
-        translate([37, 22, 0]) rotate(a = [0, -angle, 0])
+        translate([37, 17, 0]) rotate(a = [0, -angle, 0])
         translate([0, 0, 20]) rotate(a = [-90, 0, 0])
-            translate([0, 0, 0]) cube([54, 23, 5]);
+            translate([0, 0, 0]) cube([54, 25, 10]);
     }
     translate([-5, -5, -10]) cube([60, 60, 10]);
     translate([0, -5, plate_height]) cube([30, 60, 60]);
+    translate([0, -1, plate_height]) cube([40, 18, 30]);
 }
 
 translate([37, 0, 0]) rotate(a = [0, -angle, 0])
