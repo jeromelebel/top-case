@@ -1,10 +1,13 @@
 angle=23.26;
+plate_height = 2.8;
 
 union() {
-    cube([20, 20, 10]);
-    translate([20, 0, 0]) cube([50, 35, 10]);
-    translate([20, 35, 0]) cube([15, 50, 10]);
-    translate([0, 65, 0]) cube([20, 20, 10]);
+    cube([20, 20, plate_height]);
+    translate([20, 0, 0]) cube([50, 27, plate_height]);
+    translate([20, 50, 0]) cube([50, 35, plate_height]);
+    translate([20, 0, 0]) cube([15, 85, plate_height]);
+    translate([0, 65, 0]) cube([20, 20, plate_height]);
+    translate([30, 0, 0]) cube([40, 27, 20]);
 }
 
 translate([37, 0, 0]) rotate(a = [0, -angle, 0])
