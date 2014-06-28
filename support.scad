@@ -1,6 +1,7 @@
 angle=23.26;
 plate_height = 2.8;
 servo = false;
+$fn = 50;
 
 module support() {
     difference () {
@@ -18,10 +19,13 @@ module support() {
         translate([-5, -5, -10]) cube([60, 60, 10]);
         translate([0, -5, plate_height]) cube([30, 60, 60]);
         translate([0, -1, plate_height]) cube([43.5, 18, 30]);
+        translate([10, 10, -1]) cylinder(h = plate_height + 2, r = 2);
+        translate([60, 10, -1]) cylinder(h = plate_height + 20, r = 2);
+        translate([60, 10, plate_height]) cylinder(h = 20, r = 6);
     }
 }
 
-module servo(extra_bottom = false, extra_left = false) {
+module servo(extra_bottom = false, extra_left = false, cylinder_for_holes = false) {
     translate([37, 0, 0]) rotate(a = [0, -angle, 0])
     translate([0, 0, 20]) rotate(a = [-90, 0, 0])
     color("red") union() {
@@ -36,12 +40,22 @@ module servo(extra_bottom = false, extra_left = false) {
                 translate([7, -5, 0]) cube([40, 20, 38]);
             }
         }
-        translate([0, 0, 27]) difference () {
-            cube([54, 20, 2.5]);
-            translate([3, 5, -1]) cylinder(h = 4, r = 2);
-            translate([3, 15, -1]) cylinder(h = 4, r = 2);
-            translate([51, 5, -1]) cylinder(h = 4, r = 2);
-            translate([51, 15, -1]) cylinder(h = 4, r = 2);
+        if (cylinder_for_holes) {
+            translate([0, 0, 27]) union () {
+                cube([54, 20, 2.5]);
+                translate([3, 5, -11]) cylinder(h = 24, r = 2);
+                translate([3, 15, -11]) cylinder(h = 24, r = 2);
+                translate([51, 5, -11]) cylinder(h = 24, r = 2);
+                translate([51, 15, -11]) cylinder(h = 24, r = 2);
+            }
+        } else {
+            translate([0, 0, 27]) difference () {
+                cube([54, 20, 2.5]);
+                translate([3, 5, -1]) cylinder(h = 4, r = 2);
+                translate([3, 15, -1]) cylinder(h = 4, r = 2);
+                translate([51, 5, -1]) cylinder(h = 4, r = 2);
+                translate([51, 15, -1]) cylinder(h = 4, r = 2);
+            }
         }
         translate([37.5, 10, 0]) cylinder(h = 46, r = 4.5);
         translate([37.5, 10, 46]) difference() {
@@ -57,6 +71,6 @@ if (servo) {
 } else {
     difference() {
         support();
-        servo(true, true);
+        servo(true, true, true);
     }
 }
