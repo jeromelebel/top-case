@@ -1,6 +1,7 @@
 angle=23.26;
 plate_height = 2.8;
 servo = false;
+simple = true;
 $fn = 50;
 
 module support() {
@@ -11,7 +12,11 @@ module support() {
 //            translate([20, 50, 0]) cube([50, 35, plate_height]);
 //            translate([20, 0, 0]) cube([15, 85, plate_height]);
 //            translate([0, 65, 0]) cube([20, 20, plate_height]);
-            translate([30, 0, 0]) cube([40, 27, 20]);
+            if (simple) {
+                translate([30, 17, 0]) cube([40, 10, 20]);
+            } else {
+                translate([30, 0, 0]) cube([40, 27, 20]);
+            }
             translate([37, 17, 0]) rotate(a = [0, -angle, 0])
             translate([0, 0, 20]) rotate(a = [-90, 0, 0])
                 translate([0, 0, 0]) cube([54, 25, 10]);
