@@ -1,5 +1,5 @@
 angle=23.26;
-plate_height = 2.8;
+plate_height = 2.56;
 servo = false;
 simple = true;
 $fn = 50;
