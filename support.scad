@@ -1,8 +1,10 @@
 angle=23.26;
 plate_height = 2.56;
 servo = false;
-simple = true;
+simple = false;
 $fn = 50;
+
+servo_length = 40;
 
 module support() {
     difference () {
@@ -34,15 +36,15 @@ module servo(extra_bottom = false, extra_left = false, cylinder_for_holes = fals
     translate([37, 0, 0]) rotate(a = [0, -angle, 0])
     translate([0, 0, 20]) rotate(a = [-90, 0, 0])
     color("red") union() {
-        translate([7, 0, 0]) cube([40, 20, 38]);
+        translate([27 - (servo_length / 2), 0, 0]) cube([servo_length, 20, 38]);
         if (extra_left && extra_bottom) {
-            translate([7, -5, -5]) cube([40, 25, 38]);
+            translate([27 - (servo_length / 2), -5, -5]) cube([servo_length, 25, 38]);
         } else {
             if (extra_bottom) {
-                translate([7, 0, -5]) cube([40, 20, 10]);
+                translate([27 - (servo_length / 2), 0, -5]) cube([servo_length, 20, 10]);
             }
             if (extra_left) {
-                translate([7, -5, 0]) cube([40, 20, 38]);
+                translate([27 - (servo_length / 2), -5, 0]) cube([servo_length, 20, 38]);
             }
         }
         if (cylinder_for_holes) {
