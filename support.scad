@@ -70,7 +70,7 @@ module servo(extra_bottom = false, extra_left = false, cylinder_for_holes = fals
     }
 }
 
-if (servo) {
+rotate([ -90, 0, 0 ]) if (servo) {
     support();
     servo();
 } else {
