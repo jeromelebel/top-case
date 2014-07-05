@@ -26,8 +26,8 @@ module support() {
         translate([-5, -5, -10]) cube([60, 60, 10]);
         translate([0, -5, plate_height]) cube([30, 60, 60]);
         translate([0, -1, plate_height]) cube([43, 18, 30]);
-        translate([10, 10, -1]) cylinder(h = plate_height + 2, r = 2);
-        translate([60, 10, -1]) cylinder(h = plate_height + 20, r = 2);
+        translate([15, 10, -1]) cylinder(h = plate_height + 2, r = 0.5);
+        translate([60, 10, -1]) cylinder(h = plate_height + 20, r = 0.5);
         translate([60, 10, plate_height]) cylinder(h = 20, r = 6);
     }
 }
