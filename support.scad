@@ -5,7 +5,7 @@ plate_servo_holder_thickness = 10;
 servo = false;
 simple = false;
 $fn = 50;
-version = "left";
+version = "right";
 
 servo_length = 41;
 servo_main_part_height = 27;
@@ -19,30 +19,19 @@ module support(version) {
             } else {
                 translate([30, 0, 0]) cube([40, plate_width, 20]);
             }
-            if (version == "left") {
-                translate([37, plate_width - plate_servo_holder_thickness, 0]) rotate(a = [0, -angle, 0])
-                translate([0, 0, 20]) rotate(a = [-90, 0, 0])
-                    translate([0, 0, 0]) cube([54, 25, plate_servo_holder_thickness]);
-            } else {
-                translate([37, 0, 0]) rotate(a = [0, -angle, 0])
-                translate([0, 0, 20]) rotate(a = [-90, 0, 0])
-                    translate([0, 0, 0]) cube([54, 25, plate_servo_holder_thickness]);
-            }
+            translate([37, (version == "left")?(plate_width - plate_servo_holder_thickness):0, 0]) rotate(a = [0, -angle, 0])
+            translate([0, 0, 20]) rotate(a = [-90, 0, 0])
+                translate([0, 0, 0]) cube([54, 25, plate_servo_holder_thickness]);
         }
         translate([-5, -5, -10]) cube([60, 60, 10]);
         translate([0, -5, plate_height]) cube([30, 60, 60]);
         if (version == "left") {
             translate([-1, 20, -1]) cube([21, plate_width - 20 + 1, plate_height + 2]);
-            translate([0, -1, plate_height]) cube([43, plate_width - plate_servo_holder_thickness + 1, 30]);
-            translate([15, 10, -1]) cylinder(h = plate_height + 2, r = 0.5);
-            translate([60, 10, -1]) cylinder(h = plate_height + 20, r = 0.5);
-            translate([60, 10, plate_height]) cylinder(h = 20, r = 6);
-        } else {
-            translate([0, plate_servo_holder_thickness, plate_height]) cube([43, plate_width - plate_servo_holder_thickness + 1, 30]);
-            translate([15, 17, -1]) cylinder(h = plate_height + 2, r = 0.5);
-            translate([60, 17, -1]) cylinder(h = plate_height + 20, r = 0.5);
-            translate([60, 17, plate_height]) cylinder(h = 20, r = 6);
         }
+        translate([0, (version == "left")?-1:plate_servo_holder_thickness, plate_height]) cube([43, plate_width - plate_servo_holder_thickness + 1, 30]);
+        translate([15, (version == "left")?10:17, -1]) cylinder(h = plate_height + 2, r = 0.5);
+        translate([60, (version == "left")?10:17, -1]) cylinder(h = plate_height + 20, r = 0.5);
+        translate([60, (version == "left")?10:17, plate_height]) cylinder(h = 20, r = 6);
     }
 }
 
@@ -93,23 +82,13 @@ rotate([ (version == "left") ?-90:90, 0, 0 ])
 if (servo) {
     support(version);
     translate([37, 0, 0]) rotate(a = [0, -angle, 0])
-    if (version == "left") {
-        translate([0, 0, 20]) rotate(a = [-90, 0, 0])
-        servo();
-    } else {
-        translate([0, servo_main_part_height, 0]) rotate(a = [90, 0, 0])
-        servo();
-    }
+    translate([0, (version == "left")?0:servo_main_part_height, (version == "left")?20:0]) rotate(a = [(version == "left")?-90:90, 0, 0])
+    servo();
 } else {
     difference() {
         support(version);
         translate([37, 0, 0]) rotate(a = [0, -angle, 0])
-    if (version == "left") {
-        translate([0, 0, 20]) rotate(a = [-90, 0, 0])
-        servo(true, true, false, true);
-    } else {
-        translate([0, servo_main_part_height, 0]) rotate(a = [90, 0, 0])
-        servo(true, false, true, true);
-        }
+        translate([0, (version == "left")?0:servo_main_part_height, (version == "left")?20:0]) rotate(a = [(version == "left")?-90:90, 0, 0])
+        servo(true, version == "left", version == "right", true);
     }
 }
