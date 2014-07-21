@@ -1,0 +1,1 @@
+core-firmware/tools/update-project.sh
