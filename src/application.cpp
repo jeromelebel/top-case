@@ -55,38 +55,20 @@ REASON WHATSOEVER.
 #define SS_PIN      A2      // Same pin used as hardware SPI (SS)
 #define RST_PIN     D2
 
-/* Define the pins used for the DATA OUT (MOSI), DATA IN (MISO) and CLOCK (SCK) pins for SOFTWARE SPI ONLY */
-/* Change as required and may be same as hardware SPI as listed in comments */
-#define MOSI_PIN    D3      // hardware SPI: A5
-#define MISO_PIN    D4      //     "     " : A4
-#define SCK_PIN     D5      //     "     " : A3
-
-/* Create an instance of the RFID library */
-#if defined(_USE_SOFT_SPI)
-    RFID(int chipSelectPin, int NRSTPD, uint8_t mosiPin, uint8_t misoPin, uint8_t clockPin);    // Software SPI
-#else
-    RFID RC522(SS_PIN, RST_PIN);    // Hardware SPI
-#endif
-
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(24, D3, WS2812B);
+RFID RC522(SS_PIN, RST_PIN);    // Hardware SPI
 
 uint8_t RFIDCardAmesterdam1[5] = { 0x88, 0x04, 0xF4, 0xAC, 0xD4 };
 uint8_t RFIDCardAmesterdam2[5] = { 0x88, 0x04, 0xF5, 0xAC, 0xD5 };
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+Adafruit_PWMServoDriver pwm;
 
-#define SERVOMIN  150 // this is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX  600 // this is the 'maximum' pulse length count (out of 4096)
+#define ATTACH_SERVO_ID     15
+int attachServoOpen = 300;
+int attachServoClose = 600;
+char latestCard[64] = { 0 };
 
-void setColorStrip(uint32_t color)
-{
-	uint16_t i;
-	
-    for(i=0; i<strip.numPixels(); i++) {
-        strip.setPixelColor(i, color);
-    }
-    strip.show();
-}
+int closeAttach(String args);
+int openAttach(String args);
 
 uint8_t currentServo = 15;
 
@@ -124,17 +106,9 @@ int setfrequency(String args)
     return 0;
 }
 
-int test(String args)
+int playFrequency(String args)
 {
-    Serial.println("test");
-    for (uint16_t pulselen = SERVOMIN; pulselen < SERVOMAX; pulselen++) {
-        pwm.setPWM(15, 0, pulselen);
-        pwm.setPWM(12, 0, pulselen);
-    }
-    for (uint16_t pulselen = SERVOMAX; pulselen > SERVOMIN; pulselen--) {
-        pwm.setPWM(15, 0, pulselen);
-        pwm.setPWM(12, 0, pulselen);
-    }
+    tone(A6, args.toInt(), 500);
     return 0;
 }
 
@@ -151,16 +125,18 @@ void setup()
     /* Initialise the RFID reader */
     RC522.init();
     Serial.println("bonjour");
-    setColorStrip(0);
     
     pwm.begin();
     pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
     
+    Spark.function("play", playFrequency);
     Spark.function("setservo", setservo);
     Spark.function("moveservo", moveservo);
     Spark.function("releaseservo", releaseservo);
     Spark.function("setfrequency", setfrequency);
-    Spark.function("test", test);
+    Spark.function("openattach", openAttach);
+    Spark.function("closeattach", closeAttach);
+    Spark.variable("latestcard", latestCard, STRING);
 }
 
 bool compareRFID(uint8_t *card1, uint8_t *card2)
@@ -172,71 +148,46 @@ uint8_t currentRFIDCard[5];
 uint8_t blankRFIDCard[5] = { 0, 0, 0, 0, 0};
 unsigned long cardDetectedTime = 0;
 
+int openAttach(String args)
+{
+    tone(A6, 213, 500);
+    pwm.setPWM(ATTACH_SERVO_ID, 0, attachServoOpen);
+    
+    return 0;
+}
+
+int closeAttach(String args)
+{
+    tone(A6, 440, 500);
+    pwm.setPWM(ATTACH_SERVO_ID, 0, attachServoClose);
+    return 0;
+}
+
 void rfid_loop()
 {
-	/* Temporary loop counter */
-	uint8_t i;
-	
 	/* Has a card been detected? */
 	if (RC522.isCard() && RC522.readCardSerial()) {
 	    /* If so then get its serial number */
 
 		if (compareRFID(currentRFIDCard, RC522.serNum)) {
-/*	    } else if (compareRFID(RFIDCard1, RC522.serNum)) {
-			Serial.println("carte 1");
-			 setColorStrip(0x0000FF);
-	    } else if (compareRFID(RFIDCard2, RC522.serNum)) {
-			Serial.println("carte 2");
-			setColorStrip(0x00FF00);
-	    } else if (compareRFID(RFIDCard3, RC522.serNum)) {
-			Serial.println("carte 3");
-			setColorStrip(0xFF0000);
-	    } else if (compareRFID(RFIDCardBureau, RC522.serNum)) {
-			Serial.println("Bureau");
-			setColorStrip(0xFFFF00);
-	    } else if (compareRFID(RFIDCardMaison, RC522.serNum)) {
-			Serial.println("Maison");
-			setColorStrip(0xFF00FF);*/
 	    } else if (compareRFID(RFIDCardAmesterdam1, RC522.serNum)) {
 			Serial.println("Amesterdam 1");
-			setColorStrip(0x0080FF);
+			openAttach("");
 	    } else if (compareRFID(RFIDCardAmesterdam2, RC522.serNum)) {
 			Serial.println("Amesterdam 2");
-			setColorStrip(0x8000FF);
+			closeAttach("");
 	    } else {
-			setColorStrip(0xFFFFFF);
-			for(i = 0; i <= 4; i++) {
-				if (RC522.serNum[i] < 0x10) {
-					Serial.print("0");
-		    	}
-				Serial.print(RC522.serNum[i],HEX);
-				if (i < 4) {
-					Serial.print(" ");
-				} else {
-					Serial.println("");
-				}
-			}
-		}
+            tone(A6, 880, 500);
+	    }
+	    sprintf(latestCard, "%02X:%02X:%02X:%02X:%02X", RC522.serNum[0], RC522.serNum[1], RC522.serNum[2], RC522.serNum[3], RC522.serNum[4]);
 		cardDetectedTime = millis();
 		memcpy(currentRFIDCard, RC522.serNum, 5);
 	} else if (!compareRFID(currentRFIDCard, blankRFIDCard) && millis() - cardDetectedTime > 100) {
-		setColorStrip(0x000000);
 		memcpy(currentRFIDCard, blankRFIDCard, 5);
 	}
 }
 
 void loop()
 {
-    return;
-    for (uint16_t pulselen = SERVOMIN; pulselen < SERVOMAX; pulselen++) {
-        pwm.setPWM(15, 0, pulselen);
-        pwm.setPWM(12, 0, pulselen);
-    }
-    delay(500);
-    for (uint16_t pulselen = SERVOMAX; pulselen > SERVOMIN; pulselen--) {
-        pwm.setPWM(15, 0, pulselen);
-        pwm.setPWM(12, 0, pulselen);
-    }
-    delay(500);
-    Serial.println("ok");
+    rfid_loop();
 }
