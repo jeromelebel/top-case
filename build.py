@@ -1,1 +1,1 @@
-core-firmware/tools/build.py
+spark-core/build.py

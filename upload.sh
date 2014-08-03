@@ -1,1 +1,1 @@
-core-firmware/tools/upload.sh
+spark-core/upload.sh
