@@ -50,6 +50,8 @@ REASON WHATSOEVER.
 #include "Adafruit_NeoPixel.h"
 #include "Adafruit_PWMServoDriver.h"
 
+#define POWER_SERVO_PIN     D4
+
 /* Define the pins used for the SS (SDA) and RST (reset) pins for BOTH hardware and software SPI */
 /* Change as required */
 #define SS_PIN      A2      // Same pin used as hardware SPI (SS)
@@ -126,6 +128,8 @@ void setup()
     RC522.init();
     Serial.println("bonjour");
     
+    pinMode(POWER_SERVO_PIN, OUTPUT);
+    
     pwm.begin();
     pwm.setPWMFreq(60);  // Analog servos run at ~60 Hz updates
     
@@ -151,15 +155,22 @@ unsigned long cardDetectedTime = 0;
 int openAttach(String args)
 {
     tone(A6, 213, 500);
+    digitalWrite(POWER_SERVO_PIN, HIGH);
     pwm.setPWM(ATTACH_SERVO_ID, 0, attachServoOpen);
-    
+    delay(2000);
+    pwm.setPWM(ATTACH_SERVO_ID, 4096, 0);
+//    digitalWrite(POWER_SERVO_PIN, LOW);
     return 0;
 }
 
 int closeAttach(String args)
 {
     tone(A6, 440, 500);
+    digitalWrite(POWER_SERVO_PIN, HIGH);
     pwm.setPWM(ATTACH_SERVO_ID, 0, attachServoClose);
+    delay(2000);
+    pwm.setPWM(ATTACH_SERVO_ID, 4096, 0);
+//    digitalWrite(POWER_SERVO_PIN, LOW);
     return 0;
 }
 
