@@ -1,7 +1,7 @@
 angle=23.26;
 plate_height = 2.56;
 plate_width = 27;
-plate_servo_holder_thickness = 10;
+plate_servo_holder_thickness = 8;
 servo = false;
 simple = false;
 $fn = 50;
