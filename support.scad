@@ -29,8 +29,8 @@ module support(version) {
             translate([-1, 20, -1]) cube([21, plate_width - 20 + 1, plate_height + 2]);
         }
         translate([0, (version == "left")?-1:plate_servo_holder_thickness, plate_height]) cube([43, plate_width - plate_servo_holder_thickness + 1, 30]);
-        translate([15, (version == "left")?10:17, -1]) cylinder(h = plate_height + 2, r = 0.5);
-        translate([60, (version == "left")?10:17, -1]) cylinder(h = plate_height + 20, r = 0.5);
+        translate([20, (version == "left")?10:17, -1]) cylinder(h = plate_height + 2, r = 1);
+        translate([60, (version == "left")?10:17, -1]) cylinder(h = plate_height + 20, r = 1);
         translate([60, (version == "left")?10:17, plate_height]) cylinder(h = 20, r = 6);
     }
 }
