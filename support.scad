@@ -5,10 +5,13 @@ plate_servo_holder_thickness = 8;
 servo = false;
 simple = false;
 $fn = 50;
-version = "right";
+
+// left or right
+version = "left";
 
 servo_length = 41;
 servo_main_part_height = 27;
+server_hole_radius = 2;
 
 module support(version) {
     difference () {
@@ -29,11 +32,11 @@ module support(version) {
             translate([-1, 20, -1]) cube([21, plate_width - 20 + 1, plate_height + 2]);
         }
         translate([0, (version == "left")?-1:plate_servo_holder_thickness, plate_height]) cube([43, plate_width - plate_servo_holder_thickness + 1, 30]);
-        translate([20, (version == "left")?10:17, -1]) cylinder(h = plate_height + 2, r = 2);
-        translate([60, (version == "left")?10:17, -1]) cylinder(h = plate_height + 20, r = 2);
+        translate([20, (version == "left")?10:17, -1]) cylinder(h = plate_height + 2, r = server_hole_radius);
+        translate([60, (version == "left")?10:17, -1]) cylinder(h = plate_height + 20, r = server_hole_radius);
         translate([60, (version == "left")?10:17, plate_height]) cylinder(h = 20, r = 6);
         if (version == "left") {
-            translate([ 45, -6, -1 ]) cube([ 30, 10, 20 ]);
+            translate([ 43, -6, -1 ]) cube([ 30, 11, 20 ]);
         }
     }
 }
@@ -59,18 +62,18 @@ module servo(extra_bottom = false, extra_left = false, extra_right = false, cyli
         if (cylinder_for_holes) {
             translate([0, 0, servo_main_part_height]) union () {
                 cube([54, 20, 2.5]);
-                translate([3, 5, -11]) cylinder(h = 24, r = 2);
-                translate([3, 15, -11]) cylinder(h = 24, r = 2);
-                translate([51, 5, -11]) cylinder(h = 24, r = 2);
-                translate([51, 15, -11]) cylinder(h = 24, r = 2);
+                translate([3, 5, -11]) cylinder(h = 24, r = server_hole_radius);
+                translate([3, 15, -11]) cylinder(h = 24, r = server_hole_radius);
+                translate([51, 5, -11]) cylinder(h = 24, r = server_hole_radius);
+                translate([51, 15, -11]) cylinder(h = 24, r = server_hole_radius);
             }
         } else {
             translate([0, 0, servo_main_part_height]) difference () {
                 cube([54, 20, 2.5]);
-                translate([3, 5, -1]) cylinder(h = 4, r = 2);
-                translate([3, 15, -1]) cylinder(h = 4, r = 2);
-                translate([51, 5, -1]) cylinder(h = 4, r = 2);
-                translate([51, 15, -1]) cylinder(h = 4, r = 2);
+                translate([3, 5, -1]) cylinder(h = 4, r = server_hole_radius);
+                translate([3, 15, -1]) cylinder(h = 4, r = server_hole_radius);
+                translate([51, 5, -1]) cylinder(h = 4, r = server_hole_radius);
+                translate([51, 15, -1]) cylinder(h = 4, r = server_hole_radius);
             }
         }
         translate([37.5, 10, 0]) cylinder(h = 46, r = 4.5);
